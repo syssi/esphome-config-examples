@@ -1,0 +1,102 @@
+esphome:
+  name: led-ring
+  friendly_name: "LED Ring"
+
+esp8266:
+  board: d1_mini
+
+logger:
+
+api:
+  reboot_timeout: 0s
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: !secret ap_wifi_ssid
+    password: !secret ap_wifi_password
+
+captive_portal:
+
+web_server:
+
+sensor:
+  - platform: homeassistant
+    id: soc
+    name: "State of Charge"
+    entity_id: sensor.state_of_charge
+    internal: true
+
+  - platform: homeassistant
+    id: severity
+    name: "Instantaneous Power"
+    entity_id: sensor.instantaneous_power
+    internal: true
+
+light:
+  - platform: neopixelbus
+    id: led_ring
+    name: "LED ring"
+    type: GRB
+    pin: GPIO3
+    num_leds: 24
+    method: ESP8266_DMA
+    variant: WS2812
+    restore_mode: ALWAYS_ON
+    internal: true
+
+display:
+  - platform: addressable_light
+    id: gauge
+    addressable_light_id: led_ring
+    width: 24
+    height: 1
+    update_interval: 16ms
+    lambda: |-
+      int severity_red = 800;
+      int severity_orange = 500;
+      int severity_yellow = 200;
+      float brightness = 0.40f;
+
+      Color color = Color(
+        brightness * 0,
+        brightness * 0,
+        brightness * 255
+      );
+      if(id(severity) && !isnan(id(severity).state)) {
+        if(id(severity).state > severity_red) {
+          color = Color(
+            brightness * 255,
+            brightness * 0,
+            brightness * 0
+          );
+        } else if(id(severity).state > severity_orange) {
+          color = Color(
+            brightness * 255,
+            brightness * 128,
+            brightness * 0
+          );
+        } else if(id(severity).state > severity_yellow) {
+          color = Color(
+            brightness * 255,
+            brightness * 255,
+            brightness * 0
+          );
+        } else {
+          color = Color(
+            brightness * 0,
+            brightness * 255,
+            brightness * 0
+          );
+        }
+      }
+      if(id(soc) && !isnan(id(soc).state)) {
+        int width = std::floor((it.get_width() / 100.0f) * id(soc).state);
+        it.line(0, 0, width, 0, color);
+      }
