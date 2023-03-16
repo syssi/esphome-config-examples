@@ -38,7 +38,7 @@ jobs:
         run: 'echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password\napi_encryption_key: Q+I9rYIo8qdWLs0cFIAy40xXhORuDUR1Xf1L23AlbCU=\nota_password: ota_password\nap_wifi_ssid: ap_wifi_ssid\nap_wifi_password: ap_wifi_password\n" > secrets.yaml'
       - name: Validate example configurations
         run: |
-          esphome config esp8266-gas-meter.yaml
+          for F in esp*.yaml; do esphome config $F; done
 
   esphome-compile:
     runs-on: ubuntu-latest
@@ -77,4 +77,4 @@ jobs:
         run: 'echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password\napi_encryption_key: Q+I9rYIo8qdWLs0cFIAy40xXhORuDUR1Xf1L23AlbCU=\nota_password: ota_password\nap_wifi_ssid: ap_wifi_ssid\nap_wifi_password: ap_wifi_password\n" > secrets.yaml'
       - name: Compile example configurations
         run: |
-          esphome compile esp8266-gas-meter.yaml
+          for F in esp*.yaml; do esphome compile $F; done

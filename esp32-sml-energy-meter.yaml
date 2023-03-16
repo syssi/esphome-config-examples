@@ -1,0 +1,57 @@
+esphome:
+  name: sml-energy-meter
+  friendly_name: Smartmeter
+
+esp32:
+  board: esp-wrover-kit
+  framework:
+    type: esp-idf
+
+ethernet:
+  type: LAN8720
+  mdc_pin: GPIO23
+  mdio_pin: GPIO18
+  clk_mode: GPIO17_OUT
+  phy_addr: 0
+
+logger:
+
+api:
+  reboot_timeout: 0s
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  password: !secret ota_password
+
+uart:
+  - id: uart0
+    baud_rate: 9600
+    rx_pin: GPIO14
+
+sml:
+  - id: sml0
+    uart_id: uart0
+
+sensor:
+  - platform: sml
+    sml_id: sml0
+    name: "Total Energy"
+    obis_code: "1-0:1.8.0"
+    unit_of_measurement: kWh
+    accuracy_decimals: 4
+    device_class: energy
+    state_class: total_increasing
+    filters:
+      - multiply: 0.0001
+      - throttle: 30s
+
+  - platform: sml
+    sml_id: sml0
+    name: "Instantaneous Power"
+    obis_code: "1-0:36.7.0"
+    unit_of_measurement: W
+    accuracy_decimals: 2
+    device_class: power
+    filters:
+      - multiply: 0.01
