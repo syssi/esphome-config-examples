@@ -332,7 +332,7 @@ sensor:
     address: 0x3200
     register_type: read
     value_type: U_WORD
-    bitmask: 7  #(Bits 0-3)
+    bitmask: 7
     accuracy_decimals: 0
 
   - platform: modbus_controller
@@ -342,7 +342,7 @@ sensor:
     address: 0x3200
     register_type: read
     value_type: U_WORD
-    bitmask: 0x38  #(Bits 4-7)
+    bitmask: 56
     accuracy_decimals: 0
 
   - platform: modbus_controller
@@ -422,6 +422,56 @@ text_sensor:
             // format time as YYYY-mm-dd hh:mm:ss
             sprintf(buffer,"%04d-%02d-%02d %02d:%02d:%02d",y+2000,month_,d,h,m,s);
             id(template_rtc).publish_state(buffer);
+
+  - platform: modbus_controller
+    modbus_controller_id: epever
+    name: "Charging Status"
+    address: 0x3201
+    register_type: read
+    bitmask: 12
+    raw_encode: HEXBYTES
+    lambda: |-
+      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      switch (value) {
+        case 0: return std::string("Off");
+        case 1: return std::string("Float");
+        case 2: return std::string("Boost");
+        case 3: return std::string("Equalization");
+      }
+      return str_snprintf("Unknown (0x%04X)", 17, value);
+
+  - platform: modbus_controller
+    modbus_controller_id: epever
+    name: "Battery Voltage Status"
+    address: 0x3200
+    register_type: read
+    bitmask: 7
+    raw_encode: HEXBYTES
+    lambda: |-
+      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      switch (value) {
+        case 0: return std::string("Normal");
+        case 1: return std::string("Overvolt");
+        case 2: return std::string("Low voltage disconnect");
+        case 3: return std::string("Fault");
+      }
+      return str_snprintf("Unknown (0x%04X)", 17, value);
+
+  - platform: modbus_controller
+    modbus_controller_id: epever
+    name: "Battery Temperature Status"
+    address: 0x3200
+    register_type: read
+    bitmask: 56
+    raw_encode: HEXBYTES
+    lambda: |-
+      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      switch (value) {
+        case 0: return std::string("Normal");
+        case 1: return std::string("Overtemperature");
+        case 2: return std::string("Undertemperature");
+      }
+      return str_snprintf("Unknown (0x%04X)", 17, value);
 
   - platform: template
     name: "RTC Time Sensor"
