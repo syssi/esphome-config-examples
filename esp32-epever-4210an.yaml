@@ -428,10 +428,12 @@ text_sensor:
     name: "Charging Status"
     address: 0x3201
     register_type: read
-    bitmask: 12
+    # Doesn't get applied at ESPHome 2023.3.0
+    # bitmask: 12
     raw_encode: HEXBYTES
     lambda: |-
       uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      value = modbus_controller::mask_and_shift_by_rightbit(value, 12);
       switch (value) {
         case 0: return std::string("Off");
         case 1: return std::string("Float");
@@ -442,13 +444,49 @@ text_sensor:
 
   - platform: modbus_controller
     modbus_controller_id: epever
-    name: "Battery Voltage Status"
-    address: 0x3200
+    name: "Operation Status"
+    address: 0x3201
     register_type: read
-    bitmask: 7
+    # Doesn't get applied at ESPHome 2023.3.0
+    # bitmask: 2
     raw_encode: HEXBYTES
     lambda: |-
       uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      value = modbus_controller::mask_and_shift_by_rightbit(value, 2);
+      switch (value) {
+        case 0: return std::string("Normal");
+        case 1: return std::string("Fault");
+      }
+      return str_snprintf("Unknown (0x%04X)", 17, value);
+
+  - platform: modbus_controller
+    modbus_controller_id: epever
+    name: "Status"
+    address: 0x3201
+    register_type: read
+    # Doesn't get applied at ESPHome 2023.3.0
+    # bitmask: 1
+    raw_encode: HEXBYTES
+    lambda: |-
+      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      value = modbus_controller::mask_and_shift_by_rightbit(value, 1);
+      switch (value) {
+        case 0: return std::string("Running");
+        case 1: return std::string("Standby");
+      }
+      return str_snprintf("Unknown (0x%04X)", 17, value);
+
+  - platform: modbus_controller
+    modbus_controller_id: epever
+    name: "Battery Voltage Status"
+    address: 0x3200
+    register_type: read
+    # Doesn't get applied at ESPHome 2023.3.0
+    # bitmask: 7
+    raw_encode: HEXBYTES
+    lambda: |-
+      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      value = modbus_controller::mask_and_shift_by_rightbit(value, 7);
       switch (value) {
         case 0: return std::string("Normal");
         case 1: return std::string("Overvolt");
@@ -462,10 +500,12 @@ text_sensor:
     name: "Battery Temperature Status"
     address: 0x3200
     register_type: read
-    bitmask: 56
+    # Doesn't get applied at ESPHome 2023.3.0
+    # bitmask: 56
     raw_encode: HEXBYTES
     lambda: |-
       uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      value = modbus_controller::mask_and_shift_by_rightbit(value, 56);
       switch (value) {
         case 0: return std::string("Normal");
         case 1: return std::string("Overtemperature");
