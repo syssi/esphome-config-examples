@@ -454,8 +454,8 @@ text_sensor:
       uint16_t value = modbus_controller::word_from_hex_str(x, 0);
       value = modbus_controller::mask_and_shift_by_rightbit(value, 2);
       switch (value) {
-        case 0: return std::string("Input");
-        case 1: return std::string("Cut out");
+        case 0: return std::string("Cut out");
+        case 1: return std::string("Input");
       }
       return str_snprintf("Unknown (0x%04X)", 17, value);
 
@@ -471,8 +471,8 @@ text_sensor:
       uint16_t value = modbus_controller::word_from_hex_str(x, 0);
       value = modbus_controller::mask_and_shift_by_rightbit(value, 1);
       switch (value) {
-        case 0: return std::string("Normal");
-        case 1: return std::string("Standby");
+        case 0: return std::string("Standby");
+        case 1: return std::string("Normal");
       }
       return str_snprintf("Unknown (0x%04X)", 17, value);
 
