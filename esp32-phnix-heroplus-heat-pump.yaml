@@ -468,38 +468,38 @@ select:
       "Interval": 2
 
 sensor:
-  - platform: modbus_controller
-    modbus_controller_id: phnix0
-    name: "Hot water target temperature"
-    address: 1157
-    register_type: holding
-    value_type: U_WORD
-    accuracy_decimals: 1
-    unit_of_measurement: "°C"
-    filters:
-      - multiply: 0.1
+  # - platform: modbus_controller
+  #   modbus_controller_id: phnix0
+  #   name: "Hot water target temperature"
+  #   address: 1157
+  #   register_type: holding
+  #   value_type: U_WORD
+  #   accuracy_decimals: 1
+  #   unit_of_measurement: "°C"
+  #   filters:
+  #     - multiply: 0.1
 
-  - platform: modbus_controller
-    modbus_controller_id: phnix0
-    name: "Heating target temp"
-    address: 1158
-    register_type: holding
-    value_type: U_WORD
-    accuracy_decimals: 1
-    unit_of_measurement: "°C"
-    filters:
-      - multiply: 0.1
+  # - platform: modbus_controller
+  #   modbus_controller_id: phnix0
+  #   name: "Heating target temp"
+  #   address: 1158
+  #   register_type: holding
+  #   value_type: U_WORD
+  #   accuracy_decimals: 1
+  #   unit_of_measurement: "°C"
+  #   filters:
+  #     - multiply: 0.1
 
-  - platform: modbus_controller
-    modbus_controller_id: phnix0
-    name: "Cooling target temp"
-    address: 1159
-    register_type: holding
-    value_type: U_WORD
-    accuracy_decimals: 1
-    unit_of_measurement: "°C"
-    filters:
-      - multiply: 0.1
+  # - platform: modbus_controller
+  #   modbus_controller_id: phnix0
+  #   name: "Cooling target temp"
+  #   address: 1159
+  #   register_type: holding
+  #   value_type: U_WORD
+  #   accuracy_decimals: 1
+  #   unit_of_measurement: "°C"
+  #   filters:
+  #     - multiply: 0.1
 
   - platform: modbus_controller
     modbus_controller_id: phnix0
@@ -512,7 +512,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: phnix0
-    name: "Temperature vlaue after limiting"
+    name: "Temperature value after limiting"
     address: 2013
     register_type: holding
     value_type: U_WORD
@@ -592,6 +592,14 @@ sensor:
     value_type: U_WORD
     accuracy_decimals: 1
     unit_of_measurement: "rpm"
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "DC fan 2 speed"
+    address: 2075
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    unit_of_measurement: "rpm"
 
 switch:
   - platform: modbus_controller
@@ -625,3 +633,169 @@ text_sensor:
         case 4: return std::string("Hot water");
       }
       return str_snprintf("Unknown (0x%04X)", 17, value);
+
+
+# TODO: Decode bitmasks
+
+# 2081 03 read
+#   bit0: IPM overheat
+#   bit1: compressor start failure
+#   bit2: compressor over currents
+#   bit3: Input voltage phase loss
+#   bit4: IPM current sampling fault
+#   bit5: Overheat protection of drive board devices
+#   bit6: PFC failure
+#   bit7: DC busbar overvoltage
+#   bit8: DC bus undervoltage
+#   bit9: AC input voltage undervoltage
+#   bit10: AC input overcurrent shutdown
+#   bit11: Input voltage sampling fault
+#   bit12: DSP and PFC communication failure
+#   bit13: Drive plate temperature fault
+#   bit14: DSPand communication board communication failure
+#   bit15: mainboard communication failure
+#
+# 2082 03 read
+#   bit0: IPM overheat stop
+#   bit1: Reserved
+#   bit2: Reserved
+#   Bit3: 15VDV undervoltage
+#   bit4: Reserved
+#   bit5: Reserved
+#   bit6: Reserved
+#   bit7: Reserved
+#   bit8: Reserved
+#   bit9: Reserved
+#   bit10: Reserved
+#   bit11: Reserved
+#   bit12: Reserved
+#   bit13: Reserved
+#   bit14: Reserved
+#   bit15: Reserved
+
+
+# 2083 03 read
+#   bit0: Voltage electromechanical current down frequency alarm
+#   bit1: Compressor weak magnetic protection alarm
+#   bit2: Power unit overheating alarm
+#   bit3: Reserved
+#   bit4: AC input current down alarm
+#   bit5: EEPROM failure warning
+#   bit6: Reserved
+#   bit7: /
+#   bit8: Reserved
+#   bit9: Reserved
+#   bit10: Reserved
+#   bit11: Reserved
+#   bit12: Reserved
+#   bit13: Reserved
+#   bit14: Reserved
+#   bit15: Reserved
+
+# 2085 03 read
+#   bit0: Reserved
+#   bit1: Reserved
+#   bit2: Heating return water temp sensor failure (0-no/1-yes)
+#   bit3: Heating outlet water temp sensor failure (0-no/1-yes)
+#   bit4: High pressure protection (0-no/1-yes)
+#   bit5: Reserved
+#   bit6: Low pressure protection (0-no/1-yes)
+#   bit7: Reserved
+#   bit8: water flow protection (0-no/1-yes)
+#   bit9: Electric heating overload protection (0-no/1-yes)
+#   bit10: Winter first class anti-freezeprotection (0-no/1-yes)
+#   bit11: Winter secondary class anti-freeze protection (0-no/1-yes)
+#   bit12: anti-freeze protection (0-no/1-yes)
+#   bit13: Reserved
+#   bit14: Room temp (0-no/1-yes)
+#   bit15: Reserved
+
+# 2086 03 Failure 2 read
+#   bit0: Exhaust temperature overprotection (0-no/1-yes)
+#   bit1: Reserved
+#   bit2: Reserved
+#   bit3: Fan 1 overload speed limit (0-no/1-yes)
+#   bit4: Fan 2 overload speed limit (0-no/1-yes)
+#   bit5: Reserved
+#   bit6: Outlet water over heat (0-no/1-yes)
+#   bit7: Mixing outlet water temp sensor failure (0-no/1-yes)
+#   bit8: Hot water return temp sensor failure (0-no/1-yes)
+#   bit9: Hot water outlet water temp sensor failure (0-no/1-yes)
+#   bit10: Reserved
+#   bit11: Reserved
+#   bit12: Reserved
+#   bit13: Reserved
+#   bit14: Reserved
+#   bit15: Reserved
+
+# 2087 16 read
+#   bit0: Reserved
+#   bit1: Reserved
+#   bit2: Reserved
+#   bit3: Reserved
+#   bit4: high pressure protection 3 times (0-no/1-yes)
+#   bit5: Reserved
+#   bit6: low pressure protection 3 times (0-no/1-yes)
+#   bit7: Reserved
+#   bit8: water flow protection 3 times (0-no/1-yes)
+#   bit9: Electric heating protection 3 times (0-no/1-yes)
+#   bit10: Reserved
+#   bit11: Reserved
+#   bit12: Anti-freeze protection 3 times (0-no/1-yes)
+#   bit13: Reserved
+#   bit14: Reserved
+#   bit15: Reserved
+
+# 2088 16 read
+#   bit0: Discharge over heat protection 3 times (0-no/1-yes)
+#   bit1: Reserved
+#   bit2: Reserved
+#   bit3: Reserved
+#   bit4: Outlet water overtemp protection 3 times (0-no/1-yes)
+#   bit5: Reserved
+#   bit6: Reserved
+#   bit7: Reserved
+#   bit8: Reserved
+#   bit9: Reserved
+#   bit10: Reserved
+#   bit11: Reserved
+#   bit12: Reserved
+#   bit13: Reserved
+#   bit14: Reserved
+#   bit15: Reserved
+
+# 2089 16 read
+#   bit0: Inlet water temp failure (0-no/1-yes)
+#   bit1: Outlet water temp failure (0-no/1-yes)
+#   bit2: Coil temp failure (0-no/1-yes)
+#   bit3: Ambient temp failure (0-no/1-yes)
+#   bit4: Suction temp failure (0-no/1-yes)
+#   bit5: Anti-freeze temp sensor failure (0-no/1-yes)
+#   bit6: Reserved
+#   bit7: Reserved
+#   bit8: Reserved
+#   bit9: EVI inlet temp failure (0-no/1-yes)
+#   bit10: EVI outlet temp failure (0-no/1-yes)
+#   bit11: discharge temp failure (0-no/1-yes)
+#   bit12: Reserved
+#   bit13: Syetem 1 pressure sensor failure (0-no/1-yes)
+#   bit14: low ambient temp failure (0-no/1-yes)
+#   bit15: Reserved
+
+# 2090 16 read
+#   bit0: Reserved
+#   bit1: Reserved
+#   bit2: Reserved
+#   bit3: Reserved
+#   bit4: Reserved
+#   bit5: Reserved
+#   bit6: Reserved
+#   bit7: Reserved
+#   bit8: Hot water temp failure (0-no/1-yes)
+#   bit9: Reserved
+#   bit10: Reserved
+#   bit11: Fan 1 failure (0-no/1-yes)
+#   bit12: Fan 2 failure (0-no/1-yes)
+#   bit13: Communication failure(main board with fan motor module board) (0-no/1-yes)
+#   bit14: Communication failure(main board with EasyHydro)
+#   bit15: Communication failure(main board with fan motor 2 module board) (0-no/1-yes)
