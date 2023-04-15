@@ -1,0 +1,70 @@
+# https://github.com/syssi/esphome-config-examples/discussions/4
+# https://de.aliexpress.com/item/1005005293243736.html
+# https://github.com/tfyoung/esphome-junctek_kgf
+
+substitutions:
+  name: junctek-kh-f-dummy
+  external_components_source: github://tfyoung/esphome-junctek_kgf@main
+  tx_pin: GPIO4
+  rx_pin: GPIO5
+
+esphome:
+  name: ${name}
+  friendly_name: "Junctek Battery Monitor"
+  project:
+    name: "tfyoung.esphome-junctek_kgf"
+    version: 0.0.0
+
+esp8266:
+  board: d1_mini
+
+external_components:
+  - source: ${external_components_source}
+    refresh: 0s
+
+logger:
+
+api:
+  reboot_timeout: 0s
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: !secret ap_wifi_ssid
+    password: !secret ap_wifi_password
+
+captive_portal:
+
+web_server:
+
+uart:
+  id: uart0
+  baud_rate: 115200
+  tx_pin: ${tx_pin}
+  rx_pin: ${rx_pin}
+  debug:
+    direction: BOTH
+    dummy_receiver: false
+    after:
+      delimiter: "\n"
+    sequence:
+      - lambda: UARTDebug::log_string(direction, bytes);
+
+sensor:
+  - platform: junctek_kgf
+    address: 1
+    invert_current: true
+    voltage:
+      name: "Battery Voltage"
+    current:
+      name: "Battery Current"
+    battery_level:
+      name: "Battery Level"
+    temperature:
+      name: "Battery Temperature"
