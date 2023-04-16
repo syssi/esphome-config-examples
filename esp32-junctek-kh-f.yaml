@@ -3,7 +3,7 @@
 # https://github.com/tfyoung/esphome-junctek_kgf
 
 substitutions:
-  name: junctek-kh-f-dummy
+  name: junctek-kh-f
   external_components_source: github://tfyoung/esphome-junctek_kgf@main
   tx_pin: GPIO16
   rx_pin: GPIO17
