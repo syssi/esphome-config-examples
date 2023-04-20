@@ -27,7 +27,7 @@ time:
     servers: "de.pool.ntp.org"
 
 uart:
-  id: uart0
+  id: uart_0
   tx_pin: ${tx_pin}
   rx_pin: ${rx_pin}
   baud_rate: 115200
@@ -35,7 +35,7 @@ uart:
 
 modbus:
   send_wait_time: 200ms
-  uart_id: uart0
+  uart_id: uart_0
   id: modbus0
 
 modbus_controller:
