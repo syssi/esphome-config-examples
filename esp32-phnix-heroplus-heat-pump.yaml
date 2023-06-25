@@ -1,0 +1,801 @@
+# Phnix Heroplus Series P10a
+# based on `Modbus protocol V2.1.pdf`
+#
+# Kudos to @BeckoPopov
+
+esphome:
+  name: phnix-heroplus
+  friendly_name: "Heat Pump"
+
+esp32:
+  board: esp32dev
+
+logger:
+
+api:
+  reboot_timeout: 0s
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: !secret ap_wifi_ssid
+    password: !secret ap_wifi_password
+
+captive_portal:
+
+web_server:
+
+uart:
+  - id: uart0
+    tx_pin: GPIO16
+    rx_pin: GPIO17
+    baud_rate: 9600
+    # debug:
+    #   direction: BOTH
+
+modbus:
+  - uart_id: uart0
+    id: modbus0
+    send_wait_time: 200ms
+    # flow_control_pin: GPIO0
+
+modbus_controller:
+  - id: phnix0
+    address: 0x1
+    modbus_id: modbus0
+    command_throttle: 200ms
+    setup_priority: -10
+    update_interval: 10s
+
+binary_sensor:
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Unit state"
+    register_type: holding
+    address: 2011
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "DTU state"
+    register_type: holding
+    address: 2018
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Compressor output"
+    register_type: holding
+    address: 2019
+    bitmask: 0x0001
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Fan high speed output"
+    register_type: holding
+    address: 2019
+    bitmask: 0x0004
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Fan low speed output"
+    register_type: holding
+    address: 2019
+    bitmask: 0x0008
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "water pump output"
+    register_type: holding
+    address: 2019
+    bitmask: 0x0010
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "hot water pump output"
+    register_type: holding
+    address: 2019
+    bitmask: 0x0020
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "4 way valve 1"
+    register_type: holding
+    address: 2019
+    bitmask: 0x0040
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Electric heater stage 1"
+    register_type: holding
+    address: 2019
+    bitmask: 0x0080
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Electric heater stage 2"
+    register_type: holding
+    address: 2019
+    bitmask: 0x0100
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "3 way valve"
+    register_type: holding
+    address: 2019
+    bitmask: 0x0200
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "alarm output"
+    register_type: holding
+    address: 2019
+    bitmask: 0x0400
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Crankcase Heater"
+    register_type: holding
+    address: 2019
+    bitmask: 0x0800
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Pan heater"
+    register_type: holding
+    address: 2019
+    bitmask: 0x1000
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "heating water pump"
+    register_type: holding
+    address: 2019
+    bitmask: 0x2000
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Hydraulic module water loop electric heater"
+    register_type: holding
+    address: 2019
+    bitmask: 0x4000
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Hydraulic module DHW tank electric heater"
+    register_type: holding
+    address: 2019
+    bitmask: 0x8000
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "High pressure switch"
+    register_type: holding
+    address: 2034
+    bitmask: 0x0001
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Low pressure switch"
+    register_type: holding
+    address: 2034
+    bitmask: 0x0002
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Water flow switch"
+    register_type: holding
+    address: 2034
+    bitmask: 0x0004
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Electric heater overheat switch"
+    register_type: holding
+    address: 2034
+    bitmask: 0x0008
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Remote ON/OFF"
+    register_type: holding
+    address: 2034
+    bitmask: 0x0010
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Remote heating/cooling"
+    register_type: holding
+    address: 2034
+    bitmask: 0x0040
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Hot water switch"
+    register_type: holding
+    address: 2034
+    bitmask: 0x0080
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Heating/cooling ON/OFF"
+    register_type: holding
+    address: 2034
+    bitmask: 0x0200
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "High pressure switch"
+    register_type: holding
+    address: 2034
+    bitmask: 0x0001
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Low pressure switch"
+    register_type: holding
+    address: 2034
+    bitmask: 0x0002
+
+number:
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Force running time of DHW to heating set"
+    address: 1045
+    unit_of_measurement: "min"
+    value_type: S_WORD
+    entity_category: config
+    step: 1
+    min_value: 1
+    max_value: 180
+    mode: slider
+    # Default：120min
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Hot water target temp set"
+    address: 1157
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    # entity_category: config
+    # lambda: "return  x * 0.1;"
+    # write_lambda: |-
+    #   x = x * 10;
+    #   ESP_LOGD("main","Modbus Number incoming value = %f",x);
+    #   uint16_t h_water = x;
+    #   payload.push_back(h_water);
+    #   return x * 0.1;
+    multiply: 10
+    step: 0.5
+    min_value: 15
+    max_value: 65
+    mode: slider
+    # Default：55°C
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Heating target temp set"
+    address: 1158
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    # entity_category: config
+    multiply: 10
+    step: 0.5
+    min_value: 15
+    max_value: 60
+    mode: slider
+    # Default：45°C
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Cooling target temp set"
+    address: 1159
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    # entity_category: config
+    multiply: 10
+    step: 0.5
+    min_value: 5
+    max_value: 30
+    mode: slider
+    # Default：7°C
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Heating restart difference set"
+    address: 1160
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    entity_category: config
+    multiply: 10
+    step: 1
+    min_value: 0
+    max_value: 10
+    mode: box
+    # Default：2°C
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Heating constant temp downtime difference set"
+    address: 1161
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    entity_category: config
+    multiply: 10
+    step: 1
+    min_value: 0
+    max_value: 10
+    mode: box
+    # Default：1°C
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Cooling restart difference set"
+    address: 1174
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    entity_category: config
+    multiply: 10
+    step: 0.5
+    min_value: 0
+    max_value: 10
+    mode: box
+    # Default：2°C
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Cooling constant temp downtime difference set"
+    address: 1175
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    entity_category: config
+    multiply: 10
+    step: 0.5
+    min_value: 0
+    max_value: 10
+    mode: box
+    # Default：1°C
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Ambient temp of water pump running set"
+    address: 1193
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    entity_category: config
+    multiply: 10
+    step: 1
+    min_value: -10
+    max_value: 20
+    mode: box
+    # Default：2°C
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Ambient temp of hot water pump running set"
+    address: 1194
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    entity_category: config
+    multiply: 10
+    step: 1
+    min_value: -10
+    max_value: 20
+    mode: box
+    # Default：2°C
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Hot water restart difference set"
+    address: 1195
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    entity_category: config
+    multiply: 10
+    step: 1
+    min_value: 0
+    max_value: 10
+    mode: box
+    # Default：5°C
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Hot water constant temp downtime difference set"
+    address: 1196
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    entity_category: config
+    multiply: 10
+    step: 1
+    min_value: 0
+    max_value: 10
+    mode: box
+    # Default：2°C
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Water pump running interval time set"
+    address: 1198
+    unit_of_measurement: "min"
+    value_type: S_WORD
+    entity_category: config
+    step: 1
+    min_value: 1
+    max_value: 120
+    mode: slider
+    # Default：30min
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Water pump running duration set"
+    address: 1199
+    unit_of_measurement: "min"
+    value_type: S_WORD
+    entity_category: config
+    step: 1
+    min_value: 1
+    max_value: 30
+    mode: slider
+    # Default：3min
+
+select:
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Mode set"
+    address: 1012
+    value_type: S_WORD
+    # entity_category: config
+    optionsmap:
+      "Hot water": 0
+      "Heating": 1
+      "Cooling": 2
+      "Hot water+heating": 3
+      "Hot water+cooling": 4
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Electric heater functions set"
+    address: 1173
+    value_type: S_WORD
+    entity_category: config
+    optionsmap:
+      "no use": 0
+      "water line": 1
+      "water tank": 2
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Water pump running mode"
+    address: 1197
+    value_type: S_WORD
+    entity_category: config
+    optionsmap:
+      "Normal": 0
+      "Economic": 1
+      "Interval": 2
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Hot water pump working mode"
+    address: 1201
+    value_type: S_WORD
+    entity_category: config
+    optionsmap:
+      "Normal": 0
+      "Economic": 1
+      "Interval": 2
+
+sensor:
+  # - platform: modbus_controller
+  #   modbus_controller_id: phnix0
+  #   name: "Hot water target temperature"
+  #   address: 1157
+  #   register_type: holding
+  #   value_type: U_WORD
+  #   accuracy_decimals: 1
+  #   unit_of_measurement: "°C"
+  #   filters:
+  #     - multiply: 0.1
+
+  # - platform: modbus_controller
+  #   modbus_controller_id: phnix0
+  #   name: "Heating target temp"
+  #   address: 1158
+  #   register_type: holding
+  #   value_type: U_WORD
+  #   accuracy_decimals: 1
+  #   unit_of_measurement: "°C"
+  #   filters:
+  #     - multiply: 0.1
+
+  # - platform: modbus_controller
+  #   modbus_controller_id: phnix0
+  #   name: "Cooling target temp"
+  #   address: 1159
+  #   register_type: holding
+  #   value_type: U_WORD
+  #   accuracy_decimals: 1
+  #   unit_of_measurement: "°C"
+  #   filters:
+  #     - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Operation mode code"
+    address: 2012
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    unit_of_measurement: ""
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Temperature value after limiting"
+    address: 2013
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Temperature vlaue after weather compensation during heating"
+    address: 2014
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Inlet water temperature"
+    address: 2045
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Outlet water temperature"
+    address: 2046
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "DHW tank water temperature"
+    address: 2047
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Ambient temp"
+    address: 2048
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Compressor running frequency setting"
+    address: 2072
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    unit_of_measurement: "Hz"
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "DC fan 1 speed"
+    address: 2074
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    unit_of_measurement: "rpm"
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "DC fan 2 speed"
+    address: 2075
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    unit_of_measurement: "rpm"
+
+switch:
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    id: phinix0_on_off
+    name: "Power"
+    register_type: holding
+    address: 1011
+
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    id: phinix0_Water_pump_manual
+    name: "Water pump manual"
+    register_type: holding
+    address: 1202
+
+text_sensor:
+  - platform: modbus_controller
+    modbus_controller_id: phnix0
+    name: "Operation mode"
+    address: 2012
+    register_type: holding
+    raw_encode: HEXBYTES
+    lambda: |-
+      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      switch (value) {
+        case 0: return std::string("Cooling");
+        case 1: return std::string("Heating");
+        case 2: return std::string("Defrost");
+        case 3: return std::string("Sterilize");
+        case 4: return std::string("Hot water");
+      }
+      return str_snprintf("Unknown (0x%04X)", 17, value);
+
+
+# TODO: Decode bitmasks
+
+# 2081 03 read
+#   bit0: IPM overheat
+#   bit1: compressor start failure
+#   bit2: compressor over currents
+#   bit3: Input voltage phase loss
+#   bit4: IPM current sampling fault
+#   bit5: Overheat protection of drive board devices
+#   bit6: PFC failure
+#   bit7: DC busbar overvoltage
+#   bit8: DC bus undervoltage
+#   bit9: AC input voltage undervoltage
+#   bit10: AC input overcurrent shutdown
+#   bit11: Input voltage sampling fault
+#   bit12: DSP and PFC communication failure
+#   bit13: Drive plate temperature fault
+#   bit14: DSPand communication board communication failure
+#   bit15: mainboard communication failure
+#
+# 2082 03 read
+#   bit0: IPM overheat stop
+#   bit1: Reserved
+#   bit2: Reserved
+#   Bit3: 15VDV undervoltage
+#   bit4: Reserved
+#   bit5: Reserved
+#   bit6: Reserved
+#   bit7: Reserved
+#   bit8: Reserved
+#   bit9: Reserved
+#   bit10: Reserved
+#   bit11: Reserved
+#   bit12: Reserved
+#   bit13: Reserved
+#   bit14: Reserved
+#   bit15: Reserved
+
+
+# 2083 03 read
+#   bit0: Voltage electromechanical current down frequency alarm
+#   bit1: Compressor weak magnetic protection alarm
+#   bit2: Power unit overheating alarm
+#   bit3: Reserved
+#   bit4: AC input current down alarm
+#   bit5: EEPROM failure warning
+#   bit6: Reserved
+#   bit7: /
+#   bit8: Reserved
+#   bit9: Reserved
+#   bit10: Reserved
+#   bit11: Reserved
+#   bit12: Reserved
+#   bit13: Reserved
+#   bit14: Reserved
+#   bit15: Reserved
+
+# 2085 03 read
+#   bit0: Reserved
+#   bit1: Reserved
+#   bit2: Heating return water temp sensor failure (0-no/1-yes)
+#   bit3: Heating outlet water temp sensor failure (0-no/1-yes)
+#   bit4: High pressure protection (0-no/1-yes)
+#   bit5: Reserved
+#   bit6: Low pressure protection (0-no/1-yes)
+#   bit7: Reserved
+#   bit8: water flow protection (0-no/1-yes)
+#   bit9: Electric heating overload protection (0-no/1-yes)
+#   bit10: Winter first class anti-freezeprotection (0-no/1-yes)
+#   bit11: Winter secondary class anti-freeze protection (0-no/1-yes)
+#   bit12: anti-freeze protection (0-no/1-yes)
+#   bit13: Reserved
+#   bit14: Room temp (0-no/1-yes)
+#   bit15: Reserved
+
+# 2086 03 Failure 2 read
+#   bit0: Exhaust temperature overprotection (0-no/1-yes)
+#   bit1: Reserved
+#   bit2: Reserved
+#   bit3: Fan 1 overload speed limit (0-no/1-yes)
+#   bit4: Fan 2 overload speed limit (0-no/1-yes)
+#   bit5: Reserved
+#   bit6: Outlet water over heat (0-no/1-yes)
+#   bit7: Mixing outlet water temp sensor failure (0-no/1-yes)
+#   bit8: Hot water return temp sensor failure (0-no/1-yes)
+#   bit9: Hot water outlet water temp sensor failure (0-no/1-yes)
+#   bit10: Reserved
+#   bit11: Reserved
+#   bit12: Reserved
+#   bit13: Reserved
+#   bit14: Reserved
+#   bit15: Reserved
+
+# 2087 16 read
+#   bit0: Reserved
+#   bit1: Reserved
+#   bit2: Reserved
+#   bit3: Reserved
+#   bit4: high pressure protection 3 times (0-no/1-yes)
+#   bit5: Reserved
+#   bit6: low pressure protection 3 times (0-no/1-yes)
+#   bit7: Reserved
+#   bit8: water flow protection 3 times (0-no/1-yes)
+#   bit9: Electric heating protection 3 times (0-no/1-yes)
+#   bit10: Reserved
+#   bit11: Reserved
+#   bit12: Anti-freeze protection 3 times (0-no/1-yes)
+#   bit13: Reserved
+#   bit14: Reserved
+#   bit15: Reserved
+
+# 2088 16 read
+#   bit0: Discharge over heat protection 3 times (0-no/1-yes)
+#   bit1: Reserved
+#   bit2: Reserved
+#   bit3: Reserved
+#   bit4: Outlet water overtemp protection 3 times (0-no/1-yes)
+#   bit5: Reserved
+#   bit6: Reserved
+#   bit7: Reserved
+#   bit8: Reserved
+#   bit9: Reserved
+#   bit10: Reserved
+#   bit11: Reserved
+#   bit12: Reserved
+#   bit13: Reserved
+#   bit14: Reserved
+#   bit15: Reserved
+
+# 2089 16 read
+#   bit0: Inlet water temp failure (0-no/1-yes)
+#   bit1: Outlet water temp failure (0-no/1-yes)
+#   bit2: Coil temp failure (0-no/1-yes)
+#   bit3: Ambient temp failure (0-no/1-yes)
+#   bit4: Suction temp failure (0-no/1-yes)
+#   bit5: Anti-freeze temp sensor failure (0-no/1-yes)
+#   bit6: Reserved
+#   bit7: Reserved
+#   bit8: Reserved
+#   bit9: EVI inlet temp failure (0-no/1-yes)
+#   bit10: EVI outlet temp failure (0-no/1-yes)
+#   bit11: discharge temp failure (0-no/1-yes)
+#   bit12: Reserved
+#   bit13: Syetem 1 pressure sensor failure (0-no/1-yes)
+#   bit14: low ambient temp failure (0-no/1-yes)
+#   bit15: Reserved
+
+# 2090 16 read
+#   bit0: Reserved
+#   bit1: Reserved
+#   bit2: Reserved
+#   bit3: Reserved
+#   bit4: Reserved
+#   bit5: Reserved
+#   bit6: Reserved
+#   bit7: Reserved
+#   bit8: Hot water temp failure (0-no/1-yes)
+#   bit9: Reserved
+#   bit10: Reserved
+#   bit11: Fan 1 failure (0-no/1-yes)
+#   bit12: Fan 2 failure (0-no/1-yes)
+#   bit13: Communication failure(main board with fan motor module board) (0-no/1-yes)
+#   bit14: Communication failure(main board with EasyHydro)
+#   bit15: Communication failure(main board with fan motor 2 module board) (0-no/1-yes)
