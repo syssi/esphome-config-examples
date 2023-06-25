@@ -18,7 +18,7 @@ ota:
 logger:
 
 uart:
-  id: uart0
+  id: uart_0
   baud_rate: 115200
   tx_pin: ${tx_pin}
   rx_pin: ${rx_pin}
@@ -32,6 +32,6 @@ uart:
       - lambda: |-
           if(direction == 0) {
             uint8_t frame[7] = {0x01, 0x04, 0x02, 0x00, 0x0B, 0xF8, 0xF7};
-            id(uart0).write_array(frame, sizeof(frame));
+            id(uart_0).write_array(frame, sizeof(frame));
             ESP_LOGD("Lambda", "Responded");
           }
