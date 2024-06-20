@@ -15,6 +15,7 @@ ethernet:
   phy_addr: 0
 
 logger:
+  platform: esphome
 
 api:
   reboot_timeout: 0s

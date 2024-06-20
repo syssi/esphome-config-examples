@@ -18,6 +18,7 @@ preferences:
   flash_write_interval: 10min
 
 logger:
+  platform: esphome
 
 api:
   reboot_timeout: 0s

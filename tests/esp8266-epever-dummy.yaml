@@ -14,7 +14,10 @@ wifi:
   password: !secret wifi_password
 
 api:
+
 ota:
+  platform: esphome
+
 logger:
 
 uart:
