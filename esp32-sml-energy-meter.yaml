@@ -1,6 +1,7 @@
 esphome:
   name: sml-energy-meter
   friendly_name: Smartmeter
+  min_version: 2024.6.0
 
 esp32:
   board: esp-wrover-kit

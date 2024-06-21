@@ -9,6 +9,7 @@ globals:
 esphome:
   name: gas-meter
   friendly_name: "Gas meter"
+  min_version: 2024.6.0
 
 esp8266:
   board: d1_mini
