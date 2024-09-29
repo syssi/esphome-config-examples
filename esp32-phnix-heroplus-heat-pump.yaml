@@ -475,7 +475,7 @@ sensor:
   #   name: "Hot water target temperature"
   #   address: 1157
   #   register_type: holding
-  #   value_type: U_WORD
+  #   value_type: S_WORD
   #   accuracy_decimals: 1
   #   unit_of_measurement: "°C"
   #   filters:
@@ -486,7 +486,7 @@ sensor:
   #   name: "Heating target temp"
   #   address: 1158
   #   register_type: holding
-  #   value_type: U_WORD
+  #   value_type: S_WORD
   #   accuracy_decimals: 1
   #   unit_of_measurement: "°C"
   #   filters:
@@ -497,7 +497,7 @@ sensor:
   #   name: "Cooling target temp"
   #   address: 1159
   #   register_type: holding
-  #   value_type: U_WORD
+  #   value_type: S_WORD
   #   accuracy_decimals: 1
   #   unit_of_measurement: "°C"
   #   filters:
@@ -517,7 +517,7 @@ sensor:
     name: "Temperature value after limiting"
     address: 2013
     register_type: holding
-    value_type: U_WORD
+    value_type: S_WORD
     accuracy_decimals: 1
     unit_of_measurement: "°C"
     filters:
@@ -528,7 +528,7 @@ sensor:
     name: "Temperature vlaue after weather compensation during heating"
     address: 2014
     register_type: holding
-    value_type: U_WORD
+    value_type: S_WORD
     accuracy_decimals: 1
     unit_of_measurement: "°C"
     filters:
@@ -539,7 +539,7 @@ sensor:
     name: "Inlet water temperature"
     address: 2045
     register_type: holding
-    value_type: U_WORD
+    value_type: S_WORD
     accuracy_decimals: 1
     unit_of_measurement: "°C"
     filters:
@@ -550,7 +550,7 @@ sensor:
     name: "Outlet water temperature"
     address: 2046
     register_type: holding
-    value_type: U_WORD
+    value_type: S_WORD
     accuracy_decimals: 1
     unit_of_measurement: "°C"
     filters:
@@ -561,7 +561,7 @@ sensor:
     name: "DHW tank water temperature"
     address: 2047
     register_type: holding
-    value_type: U_WORD
+    value_type: S_WORD
     accuracy_decimals: 1
     unit_of_measurement: "°C"
     filters:
@@ -572,7 +572,7 @@ sensor:
     name: "Ambient temp"
     address: 2048
     register_type: holding
-    value_type: U_WORD
+    value_type: S_WORD
     accuracy_decimals: 1
     unit_of_measurement: "°C"
     filters:
