@@ -1,0 +1,184 @@
+substitutions:
+  name: voltronic-rp-rs
+  tx_pin: GPIO4
+  rx_pin: GPIO5
+
+esphome:
+  name: ${name}
+  min_version: 2024.6.0
+  includes:
+    - "esp8266-voltronic-rp-rs.h"
+
+esp8266:
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+ota:
+  platform: esphome
+
+logger:
+  level: DEBUG
+
+api:
+  reboot_timeout: 0s
+
+uart:
+  id: uart_0
+  baud_rate: 2400
+  tx_pin: ${tx_pin}
+  rx_pin: ${rx_pin}
+  debug:
+    direction: RX
+    dummy_receiver: true
+    after:
+      delimiter: "\r"
+    sequence:
+      - lambda: |-
+          UARTDebug::log_string(direction, bytes);
+          if (bytes.front() == 0x28 && bytes.back() == 0x0D) {
+            std::string str(bytes.begin() + 1, bytes.end() - 1);
+            std::vector<std::string> values;
+            std::stringstream ss(str);
+            std::string value;
+
+            // (225 50.1 229 50.1 13.03 100 000.0 000 000.0 0 0048 0040 008 025.6 B 00 00 U1V0196 0
+            //   0   1    2   3     4    5    6    7    8   9  10   11   12   13  14 15 16  17    18
+            while (std::getline(ss, value, ' ')) {
+              values.push_back(value);
+            }
+
+            if (values.size() >= 17) {
+              id(input_voltage).publish_state(std::stof(values[0]));
+              id(input_frequency).publish_state(std::stof(values[1]));
+              id(output_voltage).publish_state(std::stof(values[2]));
+              id(output_frequency).publish_state(std::stof(values[3]));
+              id(battery_voltage).publish_state(std::stof(values[4]));
+              id(battery_soc).publish_state((float) std::stoi(values[5]));
+              id(battery_charging_current).publish_state(std::stof(values[6]));
+              // 7: Unknown
+              // 8: Unknown
+              // 9: Unknown
+              id(apparent_power).publish_state((float) std::stoi(values[10]));
+              id(active_power).publish_state((float) std::stoi(values[11]));
+              id(inverter_load).publish_state((float) std::stoi(values[12]));
+              id(temperature).publish_state(std::stof(values[13]));
+              // 14: B=Battery, L=Line
+              // 17: Software version
+            } else {
+              ESP_LOGW("custom", "Unsupported or incomplete response received: %s", str.c_str());
+            }
+          }
+
+sensor:
+  - platform: template
+    id: input_voltage
+    name: "Input Voltage"
+    unit_of_measurement: V
+    device_class: voltage
+    state_class: measurement
+    accuracy_decimals: 0
+    update_interval: never
+
+  - platform: template
+    id: input_frequency
+    name: "Input Frequency"
+    unit_of_measurement: Hz
+    device_class: frequency
+    state_class: measurement
+    accuracy_decimals: 1
+    update_interval: never
+
+  - platform: template
+    id: output_voltage
+    name: "Output Voltage"
+    unit_of_measurement: V
+    device_class: voltage
+    state_class: measurement
+    accuracy_decimals: 0
+    update_interval: never
+
+  - platform: template
+    id: output_frequency
+    name: "Output Frequency"
+    unit_of_measurement: Hz
+    device_class: frequency
+    state_class: measurement
+    accuracy_decimals: 1
+    update_interval: never
+
+  - platform: template
+    id: battery_voltage
+    name: "Battery Voltage"
+    unit_of_measurement: V
+    device_class: voltage
+    state_class: measurement
+    icon: "mdi:battery-charging-high"
+    accuracy_decimals: 2
+    update_interval: never
+
+  - platform: template
+    id: battery_soc
+    name: "Battery State of Charge"
+    unit_of_measurement: "%"
+    device_class: battery
+    state_class: measurement
+    icon: "mdi:battery"
+    accuracy_decimals: 0
+    update_interval: never
+
+  - platform: template
+    id: battery_charging_current
+    name: "Battery Charging Current"
+    unit_of_measurement: A
+    device_class: current
+    state_class: measurement
+    icon: "mdi:current-ac"
+    accuracy_decimals: 1
+    update_interval: never
+
+  - platform: template
+    id: apparent_power
+    name: "Apparent Power"
+    unit_of_measurement: VA
+    device_class: apparent_power
+    state_class: measurement
+    icon: "mdi:power-plug"
+    accuracy_decimals: 0
+    update_interval: never
+
+  - platform: template
+    id: active_power
+    name: "Active Power"
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    icon: "mdi:power"
+    accuracy_decimals: 0
+    update_interval: never
+
+  - platform: template
+    id: inverter_load
+    name: "Inverter Load"
+    unit_of_measurement: "%"
+    state_class: measurement
+    icon: "mdi:percent"
+    accuracy_decimals: 0
+    update_interval: never
+
+  - platform: template
+    id: temperature
+    name: "Temperature"
+    unit_of_measurement: °C
+    device_class: temperature
+    state_class: measurement
+    icon: "mdi:thermometer"
+    accuracy_decimals: 1
+    update_interval: never
+
+interval:
+  - interval: 2s
+    then:
+      - uart.write: "Q6\r"
