@@ -1,3 +1,15 @@
+#
+# https://github.com/syssi/esphome-pipsolar/issues/166
+# https://github.com/aguglie/esphome-rp6000
+# https://www.youtube.com/watch?v=WCJXCUBa8fY
+#
+# Supported devices:
+#   - RS3000, RS3024, RS-3024
+#   - RS2000
+#   - RS4000
+#   - RP5000
+#   - RP6000, RP6024E, RP6048E
+
 substitutions:
   name: voltronic-rp-rs
   tx_pin: GPIO4
