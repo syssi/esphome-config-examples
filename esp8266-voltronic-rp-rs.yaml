@@ -65,7 +65,7 @@ uart:
               id(active_power).publish_state((float) std::stoi(values[11]));
               id(inverter_load).publish_state((float) std::stoi(values[12]));
               id(temperature).publish_state(std::stof(values[13]));
-              // 14: B=Battery, L=Line
+              id(operation_mode).publish_state(values[14] == "B" ? "Battery" : values[14] == "L" ? "Line" : "Unknown: " + values[14]);
               // 17: Software version
             } else {
               ESP_LOGW("custom", "Unsupported or incomplete response received: %s", str.c_str());
@@ -178,6 +178,12 @@ sensor:
     state_class: measurement
     icon: "mdi:thermometer"
     accuracy_decimals: 1
+    update_interval: never
+
+text_sensor:
+  - platform: template
+    id: operation_mode
+    name: "Operation Mode"
     update_interval: never
 
 interval:
