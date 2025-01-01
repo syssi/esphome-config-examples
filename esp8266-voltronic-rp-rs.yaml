@@ -70,6 +70,8 @@ uart:
             } else {
               ESP_LOGW("custom", "Unsupported or incomplete response received: %s", str.c_str());
             }
+          } else {
+            ESP_LOGW("custom", "Unsupported response received");
           }
 
 sensor:
