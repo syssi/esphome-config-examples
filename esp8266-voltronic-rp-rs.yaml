@@ -73,8 +73,8 @@ uart:
               // 7: Unknown
               // 8: Unknown
               // 9: Unknown
-              id(apparent_power).publish_state((float) std::stoi(values[10]));
-              id(active_power).publish_state((float) std::stoi(values[11]));
+              id(apparent_power).publish_state(std::stoi(values[10] * 10.0f);
+              id(active_power).publish_state(std::stoi(values[11]) * 10.0f);
               id(inverter_load).publish_state((float) std::stoi(values[12]));
               id(temperature).publish_state(std::stof(values[13]));
               id(operation_mode).publish_state(values[14] == "B" ? "Battery" : values[14] == "L" ? "Line" : "Unknown: " + values[14]);
