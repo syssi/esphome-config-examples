@@ -1,0 +1,556 @@
+#                 RS232                        UART-TTL
+#                              ┌──────────┐                ┌─────────┐
+# ┌─────────────┐              │          │<----- RX ----->│         │
+# │           D-│<---- TX ---->│  RS232   │<----- TX ----->│ ESP32/  │
+# │ USB-Plug  D+│<---- RX ---->│  to TTL  │<----- GND ---->│ ESP8266 │
+# │          GND│<---- GND --->│  module  │<-- 3.3V VCC -->│         │<--- VCC
+# └─────────────┘              │          │                │         │<--- GND
+#                              └──────────┘                └─────────┘
+#
+# Can be used to communicate with a Sacolar M5000H-48 using the USB socket
+#
+
+esphome:
+  name: shinewifi-f
+  friendly_name: "ShineWifi-F"
+  min_version: 2024.6.0
+
+esp32:
+  board: esp32dev
+
+logger:
+
+api:
+  reboot_timeout: 0s
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  platform: esphome
+  password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+uart:
+  - id: uart_0
+    tx_pin: GPIO16
+    rx_pin: GPIO17
+    baud_rate: 9600
+    debug:
+      direction: BOTH
+
+modbus:
+  - uart_id: uart_0
+    id: modbus0
+
+modbus_controller:
+  - id: inverter0
+    address: 0x1
+    modbus_id: modbus0
+    command_throttle: 200ms
+    setup_priority: -10
+    update_interval: 10s
+
+sensor:
+  - platform: modbus_controller
+    name: "PV Voltage"
+    modbus_controller_id: inverter0
+    address: 1
+    register_type: read
+    unit_of_measurement: V
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:solar-power-variant
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "PV Power"
+    modbus_controller_id: inverter0
+    address: 4
+    register_type: read
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    icon: mdi:solar-power-variant
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "Output Power"
+    modbus_controller_id: inverter0
+    address: 10
+    register_type: read
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "Apparent Power"
+    modbus_controller_id: inverter0
+    address: 12
+    register_type: read
+    unit_of_measurement: VA
+    device_class: power
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "AC Charging Power"
+    modbus_controller_id: inverter0
+    address: 14
+    register_type: read
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    icon: mdi:generator-mobile
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "AC Charging Apparent Power"
+    modbus_controller_id: inverter0
+    address: 16
+    register_type: read
+    unit_of_measurement: VA
+    device_class: power
+    state_class: measurement
+    icon: mdi:generator-mobile
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "Battery Voltage"
+    modbus_controller_id: inverter0
+    address: 17
+    register_type: read
+    unit_of_measurement: V
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:battery-charging
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.01
+
+  # Measurements useless if the inverter does not communicate with a BMS - take with a grain of salt
+  - platform: modbus_controller
+    name: "Battery SOC"
+    modbus_controller_id: inverter0
+    address: 18
+    register_type: read
+    unit_of_measurement: "%"
+    state_class: measurement
+    icon: mdi:battery-charging
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "AC Input Voltage"
+    address: 20
+    register_type: "read"
+    unit_of_measurement: V
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "AC Input Frequency"
+    address: 21
+    register_type: "read"
+    unit_of_measurement: Hz
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.01
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "AC Output Voltage"
+    address: 22
+    register_type: "read"
+    unit_of_measurement: V
+    device_class: voltage
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "AC Output Frequency"
+    address: 23
+    register_type: "read"
+    unit_of_measurement: Hz
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.01
+
+  - platform: modbus_controller
+    name: "Inverter Temperature"
+    modbus_controller_id: inverter0
+    address: 25
+    register_type: read
+    unit_of_measurement: °C
+    device_class: temperature
+    state_class: measurement
+    icon: mdi:thermometer
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "Load"
+    modbus_controller_id: inverter0
+    address: 27
+    register_type: read
+    unit_of_measurement: "%"
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "Output Current"
+    address: 34
+    register_type: "read"
+    unit_of_measurement: A
+    device_class: current
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "Inverter Current"
+    address: 35
+    register_type: "read"
+    unit_of_measurement: A
+    device_class: current
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "AC Input Power"
+    modbus_controller_id: inverter0
+    address: 37
+    register_type: read
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "Input Apparent Power"
+    modbus_controller_id: inverter0
+    address: 39
+    register_type: read
+    unit_of_measurement: VA
+    device_class: power
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "PV Energy Today"
+    address: 49
+    register_type: "read"
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total
+    icon: mdi:solar-power-variant
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "PV Energy Total"
+    address: 51
+    register_type: "read"
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total
+    icon: mdi:solar-power-variant
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "AC Charging Today"
+    address: 57
+    register_type: "read"
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "AC Charging Total"
+    address: 59
+    register_type: "read"
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "Battery Discharging Today"
+    address: 61
+    register_type: "read"
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total
+    icon: mdi:battery-arrow-down
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "Battery Discharging Total"
+    address: 63
+    register_type: "read"
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total
+    icon: mdi:battery-arrow-down
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "AC Discharging Today"
+    address: 65
+    register_type: "read"
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total
+    icon: mdi:battery-arrow-down
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "AC Discharging Total"
+    address: 67
+    register_type: "read"
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total
+    icon: mdi:battery-arrow-down
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    name: "AC Charger Battery Current"
+    address: 68
+    register_type: "read"
+    unit_of_measurement: A
+    device_class: current
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  # Doesn't work
+  - platform: modbus_controller
+    name: "AC Discharging Power"
+    modbus_controller_id: inverter0
+    address: 69
+    register_type: read
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  # Doesn't work
+  - platform: modbus_controller
+    name: "AC Discharging Apparent Power"
+    modbus_controller_id: inverter0
+    address: 71
+    register_type: read
+    unit_of_measurement: VA
+    device_class: power
+    state_class: measurement
+    icon: mdi:flash
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "Battery Discharging Power"
+    modbus_controller_id: inverter0
+    address: 74
+    register_type: read
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    icon: mdi:battery-arrow-down
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "Battery Discharging Apparent Power"
+    modbus_controller_id: inverter0
+    address: 76
+    register_type: read
+    unit_of_measurement: VA
+    device_class: power
+    state_class: measurement
+    icon: mdi:battery-arrow-down
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  # Still unsure what's happening with this one - values not entirely believable for address 77 or 78
+  - platform: modbus_controller
+    name: "Battery Power"
+    modbus_controller_id: inverter0
+    address: 78
+    register_type: read
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    icon: mdi:battery-charging
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  # No actual reference anywhere, so the filters attribute is guess work - >100% value is obviously impossible
+  - platform: modbus_controller
+    name: "Fan 2"
+    modbus_controller_id: inverter0
+    address: 83
+    register_type: read
+    unit_of_measurement: "%"
+    state_class: measurement
+    icon: mdi:fan
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    name: "Inverter Fan"
+    modbus_controller_id: inverter0
+    address: 82
+    register_type: read
+    unit_of_measurement: "%"
+    state_class: measurement
+    icon: mdi:fan
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      - multiply: 1
+
+text_sensor:
+  - platform: modbus_controller
+    modbus_controller_id: inverter0
+    register_type: read
+    address: 0
+    raw_encode: HEXBYTES
+    id: status_0
+    name: Status
+    icon: mdi:home-lightning-bolt
+    lambda: |-
+      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      switch (value) {
+        case 0: return std::string("Standby");
+        case 1: return std::string("Normal");
+        case 2: return std::string("Discharge");
+        case 3: return std::string("Fault");
+        case 4: return std::string("Flash");
+        case 5: return std::string("PV Charging");
+        case 6: return std::string("AC Charging");
+        case 7: return std::string("Combined Charging");
+        case 8: return std::string("Combined Charging & Bypass");
+        case 9: return std::string("PV Charging & Bypass");
+        case 10: return std::string("AC Charging & Bypass");
+        case 11: return std::string("Bypass");
+        case 12: return std::string("PV Charge and Discharge");
+        default: return x;
+      }
