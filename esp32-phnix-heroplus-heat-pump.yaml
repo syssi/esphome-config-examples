@@ -208,19 +208,6 @@ binary_sensor:
     address: 2034
     bitmask: 0x0200
 
-  - platform: modbus_controller
-    modbus_controller_id: phnix0
-    name: "High pressure switch"
-    register_type: holding
-    address: 2034
-    bitmask: 0x0001
-  - platform: modbus_controller
-    modbus_controller_id: phnix0
-    name: "Low pressure switch"
-    register_type: holding
-    address: 2034
-    bitmask: 0x0002
-
 number:
   - platform: modbus_controller
     modbus_controller_id: phnix0
