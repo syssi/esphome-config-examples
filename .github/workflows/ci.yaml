@@ -126,7 +126,7 @@ jobs:
           . venv/bin/activate
           echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password\napi_encryption_key: Q+I9rYIo8qdWLs0cFIAy40xXhORuDUR1Xf1L23AlbCU=\nota_password: ota_password\nap_wifi_ssid: ap_wifi_ssid\nap_wifi_password: ap_wifi_password\n" > secrets.yaml
           for YAML in esp*.yaml; do
-            esphome -s external_components_source components config $YAML >/dev/null
+            esphome -s external_components_source components config $YAML
           done
 
       - name: Validate test configurations
@@ -134,7 +134,7 @@ jobs:
           . venv/bin/activate
           echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password\napi_encryption_key: Q+I9rYIo8qdWLs0cFIAy40xXhORuDUR1Xf1L23AlbCU=\nota_password: ota_password\nap_wifi_ssid: ap_wifi_ssid\nap_wifi_password: ap_wifi_password\n" > tests/secrets.yaml
           for YAML in tests/esp*.yaml; do
-            esphome -s external_components_source ../components config $YAML >/dev/null
+            esphome -s external_components_source ../components config $YAML
           done
 
   esphome-compile:
@@ -161,7 +161,7 @@ jobs:
           . venv/bin/activate
           echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password\napi_encryption_key: Q+I9rYIo8qdWLs0cFIAy40xXhORuDUR1Xf1L23AlbCU=\nota_password: ota_password\nap_wifi_ssid: ap_wifi_ssid\nap_wifi_password: ap_wifi_password\n" > secrets.yaml
           for YAML in esp*.yaml; do
-            esphome -s external_components_source components compile $YAML >/dev/null
+            esphome -s external_components_source components compile $YAML
           done
 
       - name: Compile test configurations
@@ -169,5 +169,5 @@ jobs:
           . venv/bin/activate
           echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password\napi_encryption_key: Q+I9rYIo8qdWLs0cFIAy40xXhORuDUR1Xf1L23AlbCU=\nota_password: ota_password\nap_wifi_ssid: ap_wifi_ssid\nap_wifi_password: ap_wifi_password\n" > tests/secrets.yaml
           for YAML in tests/esp*.yaml; do
-            esphome -s external_components_source ../components compile $YAML >/dev/null
+            esphome -s external_components_source ../components compile $YAML
           done
