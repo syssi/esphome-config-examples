@@ -5,18 +5,11 @@ esphome:
   name: epever-4210an
   friendly_name: "Epever"
   min_version: 2024.6.0
-  platformio_options:
-    ## larger stack size required with all registers enable_load_test
-    ## reduce registers or wait for integration of 2.0.0 arduinoespressif32
-    ## not yet working needs 2.0
-    build_flags:
-      - -DCONFIG_ARDUINO_LOOP_STACK_SIZE=32768
 
 esp32:
   board: esp32dev
   framework:
-    type: arduino
-    version: latest
+    type: esp-idf
 
 logger:
 
