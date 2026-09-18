@@ -59,8 +59,8 @@ text_sensor:
     # bitmask: 12
     raw_encode: HEXBYTES
     lambda: |-
-      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
-      value = modbus_controller::mask_and_shift_by_rightbit(value, 12);
+      uint16_t value = modbus::helpers::word_from_hex_str(x, 0);
+      value = modbus::helpers::mask_and_shift_by_rightbit(value, 12);
       switch (value) {
         case 0: return std::string("Off");
         case 1: return std::string("Float");
@@ -78,8 +78,8 @@ text_sensor:
     # bitmask: 2
     raw_encode: HEXBYTES
     lambda: |-
-      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
-      value = modbus_controller::mask_and_shift_by_rightbit(value, 2);
+      uint16_t value = modbus::helpers::word_from_hex_str(x, 0);
+      value = modbus::helpers::mask_and_shift_by_rightbit(value, 2);
       switch (value) {
         case 0: return std::string("Normal");
         case 1: return std::string("Fault");
@@ -95,8 +95,8 @@ text_sensor:
     # bitmask: 1
     raw_encode: HEXBYTES
     lambda: |-
-      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
-      value = modbus_controller::mask_and_shift_by_rightbit(value, 1);
+      uint16_t value = modbus::helpers::word_from_hex_str(x, 0);
+      value = modbus::helpers::mask_and_shift_by_rightbit(value, 1);
       switch (value) {
         case 0: return std::string("Running");
         case 1: return std::string("Standby");

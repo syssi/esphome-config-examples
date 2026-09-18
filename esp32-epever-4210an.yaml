@@ -388,12 +388,12 @@ text_sensor:
         - lambda: |-
             ESP_LOGV("main", "decoding rtc hex encoded raw data: %s", x.c_str());
             uint8_t h=0,m=0,s=0,d=0,month_=0,y = 0 ;
-            m = esphome::modbus_controller::byte_from_hex_str(x,0);
-            s = esphome::modbus_controller::byte_from_hex_str(x,1);
-            d = esphome::modbus_controller::byte_from_hex_str(x,2);
-            h = esphome::modbus_controller::byte_from_hex_str(x,3);
-            y = esphome::modbus_controller::byte_from_hex_str(x,4);
-            month_ = esphome::modbus_controller::byte_from_hex_str(x,5);
+            m = esphome::modbus::helpers::byte_from_hex_str(x,0);
+            s = esphome::modbus::helpers::byte_from_hex_str(x,1);
+            d = esphome::modbus::helpers::byte_from_hex_str(x,2);
+            h = esphome::modbus::helpers::byte_from_hex_str(x,3);
+            y = esphome::modbus::helpers::byte_from_hex_str(x,4);
+            month_ = esphome::modbus::helpers::byte_from_hex_str(x,5);
             // Now check if the rtc time of the controller is ok and correct it
             time_t now = ::time(nullptr);
             struct tm *time_info = ::localtime(&now);
@@ -428,8 +428,8 @@ text_sensor:
     # bitmask: 12
     raw_encode: HEXBYTES
     lambda: |-
-      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
-      value = modbus_controller::mask_and_shift_by_rightbit(value, 12);
+      uint16_t value = modbus::helpers::word_from_hex_str(x, 0);
+      value = modbus::helpers::mask_and_shift_by_rightbit(value, 12);
       switch (value) {
         case 0: return std::string("Off");
         case 1: return std::string("Float");
@@ -447,8 +447,8 @@ text_sensor:
     # bitmask: 2
     raw_encode: HEXBYTES
     lambda: |-
-      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
-      value = modbus_controller::mask_and_shift_by_rightbit(value, 2);
+      uint16_t value = modbus::helpers::word_from_hex_str(x, 0);
+      value = modbus::helpers::mask_and_shift_by_rightbit(value, 2);
       switch (value) {
         case 0: return std::string("Cut out");
         case 1: return std::string("Input");
@@ -464,8 +464,8 @@ text_sensor:
     # bitmask: 1
     raw_encode: HEXBYTES
     lambda: |-
-      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
-      value = modbus_controller::mask_and_shift_by_rightbit(value, 1);
+      uint16_t value = modbus::helpers::word_from_hex_str(x, 0);
+      value = modbus::helpers::mask_and_shift_by_rightbit(value, 1);
       switch (value) {
         case 0: return std::string("Standby");
         case 1: return std::string("Normal");
@@ -481,8 +481,8 @@ text_sensor:
     # bitmask: 7
     raw_encode: HEXBYTES
     lambda: |-
-      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
-      value = modbus_controller::mask_and_shift_by_rightbit(value, 7);
+      uint16_t value = modbus::helpers::word_from_hex_str(x, 0);
+      value = modbus::helpers::mask_and_shift_by_rightbit(value, 7);
       switch (value) {
         case 0: return std::string("Normal");
         case 1: return std::string("Overvolt");
@@ -500,8 +500,8 @@ text_sensor:
     # bitmask: 56
     raw_encode: HEXBYTES
     lambda: |-
-      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
-      value = modbus_controller::mask_and_shift_by_rightbit(value, 56);
+      uint16_t value = modbus::helpers::word_from_hex_str(x, 0);
+      value = modbus::helpers::mask_and_shift_by_rightbit(value, 56);
       switch (value) {
         case 0: return std::string("Normal");
         case 1: return std::string("Overtemperature");

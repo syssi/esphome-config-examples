@@ -539,7 +539,7 @@ text_sensor:
     name: Status
     icon: mdi:home-lightning-bolt
     lambda: |-
-      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      uint16_t value = modbus::helpers::word_from_hex_str(x, 0);
       switch (value) {
         case 0: return std::string("Standby");
         case 1: return std::string("Normal");
