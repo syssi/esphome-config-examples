@@ -1,7 +1,7 @@
 esphome:
   name: sml-energy-meter
   friendly_name: Smartmeter
-  min_version: 2024.6.0
+  min_version: 2025.7.0
 
 esp32:
   board: esp-wrover-kit
@@ -12,7 +12,9 @@ ethernet:
   type: LAN8720
   mdc_pin: GPIO23
   mdio_pin: GPIO18
-  clk_mode: GPIO17_OUT
+  clk:
+    mode: CLK_OUT
+    pin: GPIO17
   phy_addr: 0
 
 logger:
