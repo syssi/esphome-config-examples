@@ -6,7 +6,7 @@
 esphome:
   name: phnix-heroplus
   friendly_name: "Heat Pump"
-  min_version: 2024.6.0
+  min_version: 2026.9.0
 
 esp32:
   board: esp32dev
@@ -52,7 +52,6 @@ modbus_controller:
   - id: phnix0
     address: 0x1
     modbus_id: modbus0
-    command_throttle: 200ms
     setup_priority: -10
     update_interval: 10s
 
